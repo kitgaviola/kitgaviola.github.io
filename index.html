@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kit Gaviola - n8n automation builder based in Cebu, Philippines. Self-hosted, local AI, no cloud API costs.">
+  <title>Kit Gaviola — n8n Automation Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #111827;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.25rem 0;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 1px 0 #e5e7eb;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav.scrolled .nav-brand { color: #111827; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav.scrolled .nav-links a { color: #6b7280; }
+    .nav-links a:hover { color: #ffffff; }
+    nav.scrolled .nav-links a:hover { color: #111827; }
+
+    /* ── HERO ── */
+    .hero {
+      background: #0f172a;
+      padding: 9rem 0 6rem;
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .hero-eyebrow {
+      font-size: 12px;
+      color: #0d9488;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+    }
+    .hero-name {
+      font-size: clamp(2.75rem, 6vw, 4.5rem);
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-tagline {
+      font-size: 18px;
+      color: #64748b;
+      margin-bottom: 1.75rem;
+    }
+    .hero-bio {
+      font-size: 16px;
+      color: #cbd5e1;
+      max-width: 520px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 4.5rem; }
+    .btn-primary {
+      display: inline-block;
+      background: #0d9488;
+      color: #ffffff;
+      padding: 0.8rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #0f766e; transform: translateY(-2px); }
+    .btn-ghost {
+      display: inline-block;
+      background: transparent;
+      color: #ffffff;
+      padding: 0.8rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.45); transform: translateY(-2px); }
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      max-width: 520px;
+    }
+    .metric {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 1.25rem 1rem;
+    }
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .metric-label { font-size: 12px; color: #64748b; line-height: 1.4; }
+
+    /* ── SECTIONS ── */
+    section { padding: 5.5rem 0; }
+    .section-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0d9488;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+    .section-desc {
+      font-size: 16px;
+      color: #6b7280;
+      max-width: 540px;
+      margin-bottom: 3rem;
+      line-height: 1.75;
+    }
+
+    /* ── BUILDS ── */
+    #builds { background: #f8fafc; }
+    .builds-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+    .build-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .build-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.07);
+    }
+    .build-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .build-title { font-size: 15px; font-weight: 600; color: #111827; line-height: 1.35; }
+    .badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-prod { background: #dcfce7; color: #15803d; }
+    .badge-portfolio { background: #dbeafe; color: #1d4ed8; }
+    .badge-draft { background: #f1f5f9; color: #64748b; }
+    .build-desc {
+      font-size: 13.5px;
+      color: #6b7280;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    .build-highlight {
+      font-size: 12.5px;
+      color: #374151;
+      background: #f8fafc;
+      border-left: 2px solid #0d9488;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 0.9rem;
+      line-height: 1.5;
+    }
+    .build-meta { font-size: 12px; color: #9ca3af; }
+    .build-meta span { margin-right: 1rem; }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .service-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .service-card:hover { border-color: #0d9488; }
+    .service-icon {
+      width: 42px;
+      height: 42px;
+      background: #f0fdfa;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 22px;
+    }
+    .service-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 0.5rem; }
+    .service-desc { font-size: 13.5px; color: #6b7280; line-height: 1.65; }
+
+    /* ── STACK ── */
+    #stack { background: #f8fafc; }
+    .stack-pills { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .stack-pill {
+      font-size: 13.5px;
+      color: #374151;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 0.45rem 1.1rem;
+      font-weight: 500;
+      transition: border-color 0.2s;
+    }
+    .stack-pill:hover { border-color: #0d9488; }
+
+    /* ── CONTACT ── */
+    #contact { background: #0f172a; }
+    #contact .section-eyebrow { color: #0d9488; }
+    #contact .section-title { color: #ffffff; }
+    #contact .section-desc { color: #94a3b8; max-width: 500px; }
+    .contact-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 18px;
+      font-weight: 500;
+      color: #0d9488;
+      text-decoration: none;
+      transition: color 0.2s;
+      margin-bottom: 1.5rem;
+    }
+    .contact-email:hover { color: #2dd4bf; }
+    .contact-note { font-size: 13.5px; color: #475569; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0f172a;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 1.5rem 0;
+      text-align: center;
+    }
+    footer p { font-size: 13px; color: #334155; }
+
+    /* ── FADE-IN ANIMATION ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      .hero { padding: 7rem 0 4rem; min-height: auto; }
+      .hero-metrics { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+      .metric-value { font-size: 1.5rem; }
+      .nav-links { display: none; }
+      .builds-grid { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 420px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .hero-metrics { grid-template-columns: 1fr; max-width: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#home" class="nav-brand">Kit Gaviola</a>
+      <ul class="nav-links">
+        <li><a href="#builds">Builds</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="container">
+      <p class="hero-eyebrow">n8n Automation Builder</p>
+      <h1 class="hero-name">Kit Gaviola</h1>
+      <p class="hero-tagline">Cebu, Philippines</p>
+      <p class="hero-bio">
+        I work as a Spanish bilingual customer service rep. Outside of that, I build n8n automations -
+        self-hosted, local AI, no cloud API costs. I'm moving into automation consulting.
+      </p>
+      <div class="hero-btns">
+        <a href="#builds" class="btn-primary">See my builds</a>
+        <a href="#contact" class="btn-ghost">Get in touch</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric">
+          <div class="metric-value">10+</div>
+          <div class="metric-label">Automations built</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">4</div>
+          <div class="metric-label">Confirmed production</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">₱0</div>
+          <div class="metric-label">Cloud AI cost per run</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILDS -->
+  <section id="builds">
+    <div class="container">
+      <p class="section-eyebrow">Builds</p>
+      <h2 class="section-title">What I've built</h2>
+      <p class="section-desc">
+        Real workflows, tested live on my own n8n instance. "Production" means every path is confirmed working.
+        "Portfolio" means it runs but is built for demonstration, not a live client.
+      </p>
+      <div class="builds-grid">
+
+        <!-- 1 -->
+        <div class="build-card fade-up">
+          <div class="build-card-top">
+            <p class="build-title">Client intake &amp; billing pipeline</p>
+            <span class="badge badge-prod">Production</span>
+          </div>
+          <p class="build-desc">
+            Built for an accounting firm. A client submits a form - 90 seconds later a VAT-inclusive
+            quote is in their inbox. Detects English vs Bisaya/Cebuano, routes differently, drafts an
+            AI reply, calculates 12% VAT with a BIR compliance note, and logs everything to Google Sheets.
+          </p>
+          <div class="build-highlight">
+            The Bisaya detection kept misclassifying. The fix was a keyword fallback layer - so even when
+            the model gets it wrong, the workflow doesn't.
+          </div>
+          <p class="build-meta">
+            <span>18 nodes</span>
+            <span>6 paths tested</span>
+            <span>Ollama · Sheets · Resend</span>
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="build-card fade-up">
+          <div class="build-card-top">
+            <p class="build-title">Invoice &amp; tax auditor</p>
+            <span class="badge badge-prod">Production</span>
+          </div>
+          <p class="build-desc">
+            Watches Gmail for PDF invoices. Extracts five fields using a local AI model - freelancer name,
+            invoice number, amount, currency, country. Fetches live exchange rates, applies Philippine
+            withholding tax logic (PH: 10%, international with waiver: 0%, without: 25%), logs to Baserow,
+            and generates a styled payment voucher.
+          </p>
+          <div class="build-highlight">
+            Zero manual data entry. The model had to extract from unstructured PDFs across multiple invoice
+            formats - tested with Chrome-printed PDFs only (Microsoft Print to PDF produces image-only files
+            with no extractable text).
+          </div>
+          <p class="build-meta">
+            <span>16 nodes</span>
+            <span>PH + international tax</span>
+            <span>Ollama · Baserow · Resend</span>
+          </p>
+        </div>
+
+        <!-- 3 -->
+        <div class="build-card fade-up">
+          <div class="build-card-top">
+            <p class="build-title">Gmail → Ollama → draft reply</p>
+            <span class="badge badge-prod">Production</span>
+          </div>
+          <p class="build-desc">
+            Monitors Gmail for emails tagged with a label. Passes each one to a local Ollama model to
+            generate a professional reply. Saves the draft back to the correct thread in Gmail Drafts -
+            ready to review and send.
+          </p>
+          <div class="build-highlight">
+            Label-based trigger, not keyword filter - no false positives. Draft saves to the original
+            thread via threadId so replies never land in the wrong conversation.
+          </div>
+          <p class="build-meta">
+            <span>5 nodes</span>
+            <span>Ollama · Gmail API</span>
+          </p>
+        </div>
+
+        <!-- 4 -->
+        <div class="build-card fade-up">
+          <div class="build-card-top">
+            <p class="build-title">Lead follow-up pipeline</p>
+            <span class="badge badge-draft">Draft</span>
+          </div>
+          <p class="build-desc">
+            Watches Gmail for leads. Filters bots and self-sent emails. Scores each lead 1-10, classifies
+            intent, flags urgency, writes a one-sentence summary. A draft reply lands in Gmail Drafts before
+            you've touched your inbox. High-urgency leads get an alert email too.
+          </p>
+          <div class="build-highlight">
+            n8n's native "Remove Label" node returns "Success" on every run but never removes the label.
+            The same emails kept re-triggering. Replaced with a direct Gmail API call via HTTP Request node.
+          </div>
+          <p class="build-meta">
+            <span>17 nodes</span>
+            <span>AI scoring + urgency routing</span>
+            <span>Ollama · Gmail API · Baserow</span>
+          </p>
+        </div>
+
+        <!-- 5 -->
+        <div class="build-card fade-up">
+          <div class="build-card-top">
+            <p class="build-title">Inventory reconciliation engine</p>
+            <span class="badge badge-portfolio">Portfolio</span>
+          </div>
+          <p class="build-desc">
+            Reconciles inventory across four sources: Postgres ERP, Shopify, 3PL US, 3PL EU, and 3PL Asia
+            via SFTP. Detects discrepancies, sends a Slack alert, pauses for human approval, then pushes
+            corrections to Shopify via GraphQL mutations. SFTP sub-workflow retries three times before
+            alerting DevOps.
+          </p>
+          <div class="build-highlight">
+            Demo version available - all external calls replaced with simulated data so it runs live
+            without credentials. Same 25-node structure as the production build.
+          </div>
+          <p class="build-meta">
+            <span>43 nodes total</span>
+            <span>Human approval gate</span>
+            <span>Postgres · Shopify · Slack · SFTP</span>
+          </p>
+        </div>
+
+        <!-- 6 -->
+        <div class="build-card fade-up">
+          <div class="build-card-top">
+            <p class="build-title">Supply chain &amp; financial compliance</p>
+            <span class="badge badge-draft">Draft</span>
+          </div>
+          <p class="build-desc">
+            Processes purchase orders from Gmail attachments - PDF or Excel. Extracts line items with AI,
+            checks stock in Google Sheets, deducts inventory per SKU in batches, calculates 12% VAT and
+            zone-based shipping, generates an HTML invoice, and routes partial/stockout orders to a
+            separate procurement alert.
+          </p>
+          <div class="build-highlight">
+            31 nodes across two branches. Inventory check fetches the full sheet once and does all SKU
+            lookups in JavaScript - avoids a per-SKU API loop that would spike CPU on a local instance.
+          </div>
+          <p class="build-meta">
+            <span>31 nodes</span>
+            <span>PDF + Excel input</span>
+            <span>Ollama · Sheets · Resend</span>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <p class="section-eyebrow">Services</p>
+      <h2 class="section-title">What I build for clients</h2>
+      <p class="section-desc">
+        For small service businesses, agencies, and solo operators. Self-hosted n8n, local AI - no
+        per-run API bills, no data leaving your machine.
+      </p>
+      <div class="services-grid">
+
+        <div class="service-card fade-up">
+          <div class="service-icon">📥</div>
+          <h3 class="service-title">Intake &amp; billing automation</h3>
+          <p class="service-desc">
+            Webhook-triggered pipelines that go from form submission to quote, invoice, or confirmation
+            email - automatically. VAT calculation, BIR compliance notes, Google Sheets logging included.
+          </p>
+        </div>
+
+        <div class="service-card fade-up">
+          <div class="service-icon">📩</div>
+          <h3 class="service-title">Lead qualification pipelines</h3>
+          <p class="service-desc">
+            Gmail-triggered workflows that score leads, classify intent, flag urgency, and drop a draft
+            reply in your inbox before you've touched the email. No OpenAI account needed.
+          </p>
+        </div>
+
+        <div class="service-card fade-up">
+          <div class="service-icon">📄</div>
+          <h3 class="service-title">Document processing</h3>
+          <p class="service-desc">
+            PDF, CSV, and Excel extraction using a local AI model. Field validation, balance checks,
+            schema enforcement - output goes to Baserow, Google Sheets, or a Postgres database.
+          </p>
+        </div>
+
+        <div class="service-card fade-up">
+          <div class="service-icon">🔁</div>
+          <h3 class="service-title">Reporting &amp; compliance automation</h3>
+          <p class="service-desc">
+            Scheduled workflows that pull data from multiple sources, apply your tax or compliance logic,
+            and deliver a formatted report. Audit trails included.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section id="stack">
+    <div class="container">
+      <p class="section-eyebrow">Stack</p>
+      <h2 class="section-title">Tools I work with</h2>
+      <div class="stack-pills">
+        <span class="stack-pill">n8n (self-hosted)</span>
+        <span class="stack-pill">Ollama / Mistral</span>
+        <span class="stack-pill">Google Sheets</span>
+        <span class="stack-pill">Baserow</span>
+        <span class="stack-pill">Resend</span>
+        <span class="stack-pill">Gmail API</span>
+        <span class="stack-pill">Postgres</span>
+        <span class="stack-pill">Shopify GraphQL</span>
+        <span class="stack-pill">SFTP</span>
+        <span class="stack-pill">JavaScript</span>
+        <span class="stack-pill">REST APIs</span>
+        <span class="stack-pill">Webhooks</span>
+        <span class="stack-pill">Resend</span>
+        <span class="stack-pill">Typeform</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <p class="section-eyebrow">Contact</p>
+      <h2 class="section-title">Get in touch</h2>
+      <p class="section-desc">
+        If there's a process eating your time - intake, follow-ups, reporting, whatever - I'd genuinely
+        like to hear about it.
+      </p>
+      <a href="mailto:kitg3199@gmail.com" class="contact-email">kitg3199@gmail.com</a>
+      <p class="contact-note">I reply within 24 hours.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Kit Gaviola &nbsp;·&nbsp; Built with n8n and Claude</p>
+    </div>
+  </footer>
+
+  <script>
+    // Sticky nav colour change on scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Fade-in on scroll
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    fadeEls.forEach(el => io.observe(el));
+  </script>
+
+</body>
+</html>
