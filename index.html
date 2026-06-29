@@ -1,632 +1,1248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Kit Gaviola - n8n automation builder based in Cebu, Philippines. Self-hosted, local AI, no cloud API costs.">
-  <title>Kit Gaviola — n8n Automation Builder</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #ffffff;
-      color: #111827;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Gaviola — AI Automation Specialist</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1.25rem 0;
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-    nav.scrolled {
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 1px 0 #e5e7eb;
-    }
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-brand {
-      font-size: 15px;
-      font-weight: 600;
-      color: #ffffff;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    nav.scrolled .nav-brand { color: #111827; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: 14px;
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    nav.scrolled .nav-links a { color: #6b7280; }
-    .nav-links a:hover { color: #ffffff; }
-    nav.scrolled .nav-links a:hover { color: #111827; }
+  :root {
+    --navy:   #1E2761;
+    --teal:   #028090;
+    --white:  #FFFFFF;
+    --bg:     #F8FAFC;
+    --card:   #FFFFFF;
+    --text:   #0F172A;
+    --sub:    #475569;
+    --muted:  #94A3B8;
+    --border: #E2E8F0;
+    --radius: 12px;
+    --c1: #7C3AED; /* proposal  */
+    --c2: #0D9488; /* report    */
+    --c3: #EA580C; /* onboarding*/
+    --c4: #2563EB; /* task coord*/
+  }
 
-    /* ── HERO ── */
-    .hero {
-      background: #0f172a;
-      padding: 9rem 0 6rem;
-      min-height: 92vh;
-      display: flex;
-      align-items: center;
-    }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
-    .hero-eyebrow {
-      font-size: 12px;
-      color: #0d9488;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-weight: 500;
-      margin-bottom: 1.25rem;
-    }
-    .hero-name {
-      font-size: clamp(2.75rem, 6vw, 4.5rem);
-      font-weight: 600;
-      color: #ffffff;
-      line-height: 1.1;
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.02em;
-    }
-    .hero-tagline {
-      font-size: 18px;
-      color: #64748b;
-      margin-bottom: 1.75rem;
-    }
-    .hero-bio {
-      font-size: 16px;
-      color: #cbd5e1;
-      max-width: 520px;
-      line-height: 1.8;
-      margin-bottom: 2.5rem;
-    }
-    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 4.5rem; }
-    .btn-primary {
-      display: inline-block;
-      background: #0d9488;
-      color: #ffffff;
-      padding: 0.8rem 1.75rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .btn-primary:hover { background: #0f766e; transform: translateY(-2px); }
-    .btn-ghost {
-      display: inline-block;
-      background: transparent;
-      color: #ffffff;
-      padding: 0.8rem 1.75rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      border: 1px solid rgba(255,255,255,0.18);
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .btn-ghost:hover { border-color: rgba(255,255,255,0.45); transform: translateY(-2px); }
-    .hero-metrics {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      max-width: 520px;
-    }
-    .metric {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 1.25rem 1rem;
-    }
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 600;
-      color: #ffffff;
-      line-height: 1;
-      margin-bottom: 0.4rem;
-    }
-    .metric-label { font-size: 12px; color: #64748b; line-height: 1.4; }
+  /* DARK MODE */
+  html.dark {
+    --bg:     #0F172A;
+    --card:   #1E293B;
+    --text:   #F1F5F9;
+    --sub:    #CBD5E1;
+    --muted:  #64748B;
+    --border: #334155;
+    color-scheme: dark;
+  }
+  html.dark body { background: var(--bg); }
+  html.dark #background,
+  html.dark #inquiry { background: #1E293B; }
+  html.dark .section-title { color: #F1F5F9; }
+  html.dark .form-box { background: var(--bg); }
+  html.dark .wf-detail { background: #0A1020; }
+  html.dark .flow-step { background: var(--card); border-color: var(--border); color: var(--sub); }
+  html.dark input,
+  html.dark select,
+  html.dark textarea { background: var(--card); color: var(--text); border-color: var(--border); }
+  html.dark .cal-box { background: var(--card); }
+  html.dark .cal-month { color: #CADCFC; }
+  html.dark .cal-day.avail:hover { background: rgba(2,128,144,0.18); }
+  html.dark .form-submit { background: var(--teal); }
+  html.dark .form-submit:hover { background: #027382; }
+  html.dark .skill-tag-accent { background: rgba(29,78,216,0.2); border-color: #3B82F6; color: #93C5FD; }
+  html.dark .wf-btn:hover { background: rgba(2,128,144,0.12); }
+  html.dark .exp-card { background: var(--card); }
 
-    /* ── SECTIONS ── */
-    section { padding: 5.5rem 0; }
-    .section-eyebrow {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #0d9488;
-      font-weight: 500;
-      margin-bottom: 0.6rem;
-    }
-    .section-title {
-      font-size: clamp(1.6rem, 3vw, 2.1rem);
-      font-weight: 600;
-      color: #111827;
-      line-height: 1.25;
-      margin-bottom: 0.75rem;
-    }
-    .section-desc {
-      font-size: 16px;
-      color: #6b7280;
-      max-width: 540px;
-      margin-bottom: 3rem;
-      line-height: 1.75;
-    }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+  }
 
-    /* ── BUILDS ── */
-    #builds { background: #f8fafc; }
-    .builds-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.25rem;
-    }
-    .build-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .build-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.07);
-    }
-    .build-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-    .build-title { font-size: 15px; font-weight: 600; color: #111827; line-height: 1.35; }
-    .badge {
-      font-size: 11px;
-      font-weight: 500;
-      padding: 3px 10px;
-      border-radius: 20px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .badge-prod { background: #dcfce7; color: #15803d; }
-    .badge-portfolio { background: #dbeafe; color: #1d4ed8; }
-    .badge-draft { background: #f1f5f9; color: #64748b; }
-    .build-desc {
-      font-size: 13.5px;
-      color: #6b7280;
-      line-height: 1.65;
-      margin-bottom: 1rem;
-    }
-    .build-highlight {
-      font-size: 12.5px;
-      color: #374151;
-      background: #f8fafc;
-      border-left: 2px solid #0d9488;
-      padding: 0.5rem 0.75rem;
-      border-radius: 0 6px 6px 0;
-      margin-bottom: 0.9rem;
-      line-height: 1.5;
-    }
-    .build-meta { font-size: 12px; color: #9ca3af; }
-    .build-meta span { margin-right: 1rem; }
+  /* NAV */
+  nav {
+    background: var(--navy);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .nav-brand span { color: #CADCFC; }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    color: #CADCFC;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--teal);
+    color: var(--white) !important;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  .nav-cta:hover { background: #027382 !important; }
+  .theme-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #CADCFC;
+    border-radius: 6px;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .theme-btn:hover { background: rgba(255,255,255,0.12); }
 
-    /* ── SERVICES ── */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.25rem;
-    }
-    .service-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: border-color 0.2s;
-    }
-    .service-card:hover { border-color: #0d9488; }
-    .service-icon {
-      width: 42px;
-      height: 42px;
-      background: #f0fdfa;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-      font-size: 22px;
-    }
-    .service-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 0.5rem; }
-    .service-desc { font-size: 13.5px; color: #6b7280; line-height: 1.65; }
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  section { padding: 4rem 0; }
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 1rem;
+  }
 
-    /* ── STACK ── */
-    #stack { background: #f8fafc; }
-    .stack-pills { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-    .stack-pill {
-      font-size: 13.5px;
-      color: #374151;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 0.45rem 1.1rem;
-      font-weight: 500;
-      transition: border-color 0.2s;
-    }
-    .stack-pill:hover { border-color: #0d9488; }
+  /* HERO */
+  #hero {
+    background: var(--navy);
+    padding: 5rem 0 4rem;
+    color: var(--white);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 3rem;
+    align-items: start;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(2,128,144,0.25);
+    border: 1px solid rgba(2,128,144,0.5);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    color: #5EEAD4;
+    margin-bottom: 1.25rem;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: #5EEAD4;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .hero-name {
+    font-size: 2.75rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 0.4rem;
+  }
+  .hero-title {
+    font-size: 1.1rem;
+    color: #CADCFC;
+    margin-bottom: 1.25rem;
+    font-weight: 400;
+  }
+  .hero-bio {
+    font-size: 1rem;
+    color: #CBD5E1;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    max-width: 520px;
+  }
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .pill {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #CBD5E1;
+  }
+  .pill-accent {
+    background: rgba(2,128,144,0.2);
+    border-color: var(--teal);
+    color: #5EEAD4;
+    font-weight: 500;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .hstat-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    display: block;
+  }
+  .hstat-lbl {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
 
-    /* ── CONTACT ── */
-    #contact { background: #0f172a; }
-    #contact .section-eyebrow { color: #0d9488; }
-    #contact .section-title { color: #ffffff; }
-    #contact .section-desc { color: #94a3b8; max-width: 500px; }
-    .contact-email {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 18px;
-      font-weight: 500;
-      color: #0d9488;
-      text-decoration: none;
-      transition: color 0.2s;
-      margin-bottom: 1.5rem;
-    }
-    .contact-email:hover { color: #2dd4bf; }
-    .contact-note { font-size: 13.5px; color: #475569; }
+  /* PHOTO */
+  .photo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .photo-frame {
+    width: 180px;
+    height: 200px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.15);
+    background: #253380;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  /* REPLACE: swap .photo-initials with <img src="kit-photo.jpg" style="width:100%;height:100%;object-fit:cover"> */
+  .photo-initials {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #CADCFC;
+    letter-spacing: -3px;
+    text-shadow: 0 2px 12px rgba(2,128,144,0.4);
+    position: relative;
+    z-index: 1;
+  }
+  .photo-frame {
+    background: linear-gradient(145deg, #1E2761 0%, #0D3460 50%, #028090 100%);
+  }
+  .photo-note {
+    font-size: 0.7rem;
+    color: #64748B;
+    text-align: center;
+    max-width: 160px;
+  }
 
-    /* ── FOOTER ── */
-    footer {
-      background: #0f172a;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 1.5rem 0;
-      text-align: center;
-    }
-    footer p { font-size: 13px; color: #334155; }
+  /* EXPERIENCE */
+  #background { background: var(--white); }
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .exp-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    border-left: 4px solid var(--teal);
+  }
+  .exp-co { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .exp-role { font-size: 0.8rem; color: var(--teal); font-weight: 500; margin-bottom: 3px; }
+  .exp-date { font-size: 0.75rem; color: var(--muted); }
+  .skills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1.5rem;
+  }
+  .skill-tag {
+    font-size: 0.8rem;
+    padding: 5px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--sub);
+  }
+  .skill-tag-accent {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+    color: #1D4ED8;
+  }
 
-    /* ── FADE-IN ANIMATION ── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
-    }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  /* WORKFLOWS */
+  #work { background: var(--bg); }
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+  .wf-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .wf-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .wf-top {
+    border-top: 4px solid var(--c1);
+    padding: 1.25rem 1.25rem 0;
+  }
+  .wf-num { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .wf-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .wf-one { font-size: 0.85rem; color: var(--sub); line-height: 1.5; margin-bottom: 1rem; }
+  .wf-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 1rem; padding: 0 1.25rem; }
+  .wf-tag { font-size: 0.7rem; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; }
+  .wf-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .wf-roi { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+  .wf-roi-lbl { font-size: 0.7rem; color: var(--muted); }
+  .wf-trigger {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .wf-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .wf-btn {
+    width: 100%;
+    padding: 0.6rem;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--teal);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background .15s;
+  }
+  .wf-btn:hover { background: #F0FDFA; }
+  .wf-detail {
+    display: none;
+    padding: 1.25rem;
+    border-top: 1px solid var(--border);
+    background: #FAFAFA;
+  }
+  .wf-detail.open { display: block; }
+  .detail-section { margin-bottom: 1rem; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .flow-steps { display: flex; flex-direction: column; gap: 3px; }
+  .flow-step {
+    font-size: 0.8rem;
+    color: var(--sub);
+    padding: 4px 8px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    position: relative;
+    padding-left: 24px;
+  }
+  .flow-step::before {
+    content: '→';
+    position: absolute;
+    left: 7px;
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+  .flow-step:first-child::before { content: '▶'; font-size: 0.6rem; top: 6px; }
+  .talk-points { list-style: none; }
+  .talk-points li {
+    font-size: 0.82rem;
+    color: var(--sub);
+    padding: 4px 0 4px 16px;
+    position: relative;
+    line-height: 1.45;
+  }
+  .talk-points li::before { content: '✓'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
 
-    /* ── MOBILE ── */
-    @media (max-width: 640px) {
-      .hero { padding: 7rem 0 4rem; min-height: auto; }
-      .hero-metrics { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
-      .metric-value { font-size: 1.5rem; }
-      .nav-links { display: none; }
-      .builds-grid { grid-template-columns: 1fr; }
-      .services-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 420px) {
-      .services-grid { grid-template-columns: 1fr; }
-      .hero-metrics { grid-template-columns: 1fr; max-width: 200px; }
-    }
-  </style>
+  /* ROI TOTAL BANNER */
+  .roi-banner {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .roi-banner-text { color: #CADCFC; font-size: 0.95rem; }
+  .roi-banner-text strong { color: var(--white); display: block; font-size: 2rem; font-weight: 700; }
+  .roi-caveat { font-size: 0.72rem; color: #64748B; margin-top: 0.5rem; font-style: italic; }
+
+  /* INQUIRY */
+  #inquiry { background: var(--white); }
+  .inquiry-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+    align-items: start;
+    margin-top: 1.5rem;
+  }
+  .form-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--sub);
+    margin-bottom: 5px;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 0.6rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--white);
+    font-family: inherit;
+    transition: border-color .2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(2,128,144,0.1); }
+  textarea { resize: vertical; min-height: 90px; }
+  select { cursor: pointer; }
+  .form-submit {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+    margin-top: 1rem;
+    letter-spacing: 0.02em;
+  }
+  .form-submit:hover { background: #152055; }
+  .form-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.4;
+  }
+  .form-note::before { content: '⚡'; flex-shrink: 0; }
+
+  /* CALENDAR */
+  .cal-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    user-select: none;
+  }
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .cal-month {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .cal-nav {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--sub);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cal-nav:hover { background: var(--bg); }
+  .cal-grid-hd {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .cal-day-hd { font-size: 0.7rem; font-weight: 600; color: var(--muted); padding: 2px 0; }
+  .cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    cursor: default;
+    color: var(--sub);
+  }
+  .cal-day.avail {
+    cursor: pointer;
+    color: var(--text);
+  }
+  .cal-day.avail:hover { background: #F0FDFA; color: var(--teal); }
+  .cal-day.selected { background: var(--navy); color: var(--white) !important; }
+  .cal-day.today { font-weight: 700; color: var(--teal); }
+  .cal-day.unavail { color: #CBD5E1; }
+  .cal-day.empty { }
+  .cal-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: var(--muted); }
+  .leg-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .cal-selected-info {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--teal);
+    font-weight: 600;
+    min-height: 1.4em;
+    text-align: center;
+    background: rgba(2,128,144,0.07);
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: none;
+  }
+  .cal-selected-info.active { display: block; }
+  input.date-flash { border-color: var(--teal) !important; box-shadow: 0 0 0 3px rgba(2,128,144,0.15) !important; }
+  #fdate { background: #F8FAFC; }
+  html.dark #fdate { background: var(--card); color: var(--text); }
+
+  .avail-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy);
+    color: #CADCFC;
+    padding: 2.5rem 0;
+  }
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-brand { font-size: 1rem; font-weight: 700; color: var(--white); }
+  .footer-links { display: flex; gap: 1rem; }
+  .footer-links a { font-size: 0.85rem; color: #CADCFC; text-decoration: none; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy { font-size: 0.75rem; color: #64748B; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: #0F172A;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* FORM SUCCESS STATE */
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 2.5rem 1rem;
+  }
+  .form-success.show { display: block; }
+  .form-success-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .form-success h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .form-success p { font-size: 0.85rem; color: var(--sub); line-height: 1.6; }
+  .form-success a { color: var(--teal); text-decoration: none; font-weight: 500; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .photo-wrap { display: none; }
+    .inquiry-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero-name { font-size: 2rem; }
+    .roi-banner { flex-direction: column; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="nav">
-    <div class="nav-inner">
-      <a href="#home" class="nav-brand">Kit Gaviola</a>
-      <ul class="nav-links">
-        <li><a href="#builds">Builds</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#stack">Stack</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#hero" class="nav-brand">Kit<span> Gaviola</span></a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#background">About</a>
+      <a href="#inquiry" class="nav-cta">Book a call</a>
+      <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">&#9790;</button>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="container">
-      <p class="hero-eyebrow">n8n Automation Builder</p>
-      <h1 class="hero-name">Kit Gaviola</h1>
-      <p class="hero-tagline">Cebu, Philippines</p>
-      <p class="hero-bio">
-        I work as a Spanish bilingual customer service rep. Outside of that, I build n8n automations -
-        self-hosted, local AI, no cloud API costs. I'm moving into automation consulting.
-      </p>
-      <div class="hero-btns">
-        <a href="#builds" class="btn-primary">See my builds</a>
-        <a href="#contact" class="btn-ghost">Get in touch</a>
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge">Available for projects</div>
+        <h1 class="hero-name">Kit Gaviola</h1>
+        <p class="hero-title">AI Automation Specialist &nbsp;·&nbsp; Bilingual English + Spanish</p>
+        <p class="hero-bio">
+          I spent four years working inside the operations that automation replaces — BPO, B2B international sales, technical support.
+          Now I build n8n + local AI systems that eliminate that manual work for good.
+          Based in Cebu, Philippines.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">ES Spanish bilingual</span>
+          <span class="pill">n8n</span>
+          <span class="pill">Ollama / local AI</span>
+          <span class="pill">API integration</span>
+          <span class="pill">Cebu, PH</span>
+        </div>
+        <div style="margin-bottom:1.25rem;">
+          <a href="https://www.linkedin.com/in/kit-gaviola-2943ab281/" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;color:#CADCFC;text-decoration:none;font-size:0.875rem;border:1px solid rgba(255,255,255,0.2);padding:6px 14px;border-radius:6px;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#CADCFC'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+            linkedin.com/in/kit-gaviola
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <span class="hstat-val">4</span>
+            <span class="hstat-lbl">live workflows</span>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1);height:36px;"></div>
+          <div>
+            <span class="hstat-val">$2,377</span>
+            <span class="hstat-lbl">monthly value delivered</span>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1);height:36px;"></div>
+          <div>
+            <span class="hstat-val">4 yrs</span>
+            <span class="hstat-lbl">ops background</span>
+          </div>
+        </div>
       </div>
-      <div class="hero-metrics">
-        <div class="metric">
-          <div class="metric-value">10+</div>
-          <div class="metric-label">Automations built</div>
+      <div class="photo-wrap">
+        <div class="photo-frame">
+          <!--
+            TO REPLACE WITH YOUR PHOTO:
+            1. Save your photo as kit-photo.jpg in the same folder as this HTML file
+            2. Delete the <span class="photo-initials">KG</span> line below
+            3. Replace it with: <img src="kit-photo.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          -->
+          <span class="photo-initials">KG</span>
         </div>
-        <div class="metric">
-          <div class="metric-value">4</div>
-          <div class="metric-label">Confirmed production</div>
-        </div>
-        <div class="metric">
-          <div class="metric-value">₱0</div>
-          <div class="metric-label">Cloud AI cost per run</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BUILDS -->
-  <section id="builds">
-    <div class="container">
-      <p class="section-eyebrow">Builds</p>
-      <h2 class="section-title">What I've built</h2>
-      <p class="section-desc">
-        Real workflows, tested live on my own n8n instance. "Production" means every path is confirmed working.
-        "Portfolio" means it runs but is built for demonstration, not a live client.
-      </p>
-      <div class="builds-grid">
-
-        <!-- 1 -->
-        <div class="build-card fade-up">
-          <div class="build-card-top">
-            <p class="build-title">Client intake &amp; billing pipeline</p>
-            <span class="badge badge-prod">Production</span>
-          </div>
-          <p class="build-desc">
-            Built for an accounting firm. A client submits a form - 90 seconds later a VAT-inclusive
-            quote is in their inbox. Detects English vs Bisaya/Cebuano, routes differently, drafts an
-            AI reply, calculates 12% VAT with a BIR compliance note, and logs everything to Google Sheets.
-          </p>
-          <div class="build-highlight">
-            The Bisaya detection kept misclassifying. The fix was a keyword fallback layer - so even when
-            the model gets it wrong, the workflow doesn't.
-          </div>
-          <p class="build-meta">
-            <span>18 nodes</span>
-            <span>6 paths tested</span>
-            <span>Ollama · Sheets · Resend</span>
-          </p>
-        </div>
-
-        <!-- 2 -->
-        <div class="build-card fade-up">
-          <div class="build-card-top">
-            <p class="build-title">Invoice &amp; tax auditor</p>
-            <span class="badge badge-prod">Production</span>
-          </div>
-          <p class="build-desc">
-            Watches Gmail for PDF invoices. Extracts five fields using a local AI model - freelancer name,
-            invoice number, amount, currency, country. Fetches live exchange rates, applies Philippine
-            withholding tax logic (PH: 10%, international with waiver: 0%, without: 25%), logs to Baserow,
-            and generates a styled payment voucher.
-          </p>
-          <div class="build-highlight">
-            Zero manual data entry. The model had to extract from unstructured PDFs across multiple invoice
-            formats - tested with Chrome-printed PDFs only (Microsoft Print to PDF produces image-only files
-            with no extractable text).
-          </div>
-          <p class="build-meta">
-            <span>16 nodes</span>
-            <span>PH + international tax</span>
-            <span>Ollama · Baserow · Resend</span>
-          </p>
-        </div>
-
-        <!-- 3 -->
-        <div class="build-card fade-up">
-          <div class="build-card-top">
-            <p class="build-title">Gmail → Ollama → draft reply</p>
-            <span class="badge badge-prod">Production</span>
-          </div>
-          <p class="build-desc">
-            Monitors Gmail for emails tagged with a label. Passes each one to a local Ollama model to
-            generate a professional reply. Saves the draft back to the correct thread in Gmail Drafts -
-            ready to review and send.
-          </p>
-          <div class="build-highlight">
-            Label-based trigger, not keyword filter - no false positives. Draft saves to the original
-            thread via threadId so replies never land in the wrong conversation.
-          </div>
-          <p class="build-meta">
-            <span>5 nodes</span>
-            <span>Ollama · Gmail API</span>
-          </p>
-        </div>
-
-        <!-- 4 -->
-        <div class="build-card fade-up">
-          <div class="build-card-top">
-            <p class="build-title">Lead follow-up pipeline</p>
-            <span class="badge badge-draft">Draft</span>
-          </div>
-          <p class="build-desc">
-            Watches Gmail for leads. Filters bots and self-sent emails. Scores each lead 1-10, classifies
-            intent, flags urgency, writes a one-sentence summary. A draft reply lands in Gmail Drafts before
-            you've touched your inbox. High-urgency leads get an alert email too.
-          </p>
-          <div class="build-highlight">
-            n8n's native "Remove Label" node returns "Success" on every run but never removes the label.
-            The same emails kept re-triggering. Replaced with a direct Gmail API call via HTTP Request node.
-          </div>
-          <p class="build-meta">
-            <span>17 nodes</span>
-            <span>AI scoring + urgency routing</span>
-            <span>Ollama · Gmail API · Baserow</span>
-          </p>
-        </div>
-
-        <!-- 5 -->
-        <div class="build-card fade-up">
-          <div class="build-card-top">
-            <p class="build-title">Inventory reconciliation engine</p>
-            <span class="badge badge-portfolio">Portfolio</span>
-          </div>
-          <p class="build-desc">
-            Reconciles inventory across four sources: Postgres ERP, Shopify, 3PL US, 3PL EU, and 3PL Asia
-            via SFTP. Detects discrepancies, sends a Slack alert, pauses for human approval, then pushes
-            corrections to Shopify via GraphQL mutations. SFTP sub-workflow retries three times before
-            alerting DevOps.
-          </p>
-          <div class="build-highlight">
-            Demo version available - all external calls replaced with simulated data so it runs live
-            without credentials. Same 25-node structure as the production build.
-          </div>
-          <p class="build-meta">
-            <span>43 nodes total</span>
-            <span>Human approval gate</span>
-            <span>Postgres · Shopify · Slack · SFTP</span>
-          </p>
-        </div>
-
-        <!-- 6 -->
-        <div class="build-card fade-up">
-          <div class="build-card-top">
-            <p class="build-title">Supply chain &amp; financial compliance</p>
-            <span class="badge badge-draft">Draft</span>
-          </div>
-          <p class="build-desc">
-            Processes purchase orders from Gmail attachments - PDF or Excel. Extracts line items with AI,
-            checks stock in Google Sheets, deducts inventory per SKU in batches, calculates 12% VAT and
-            zone-based shipping, generates an HTML invoice, and routes partial/stockout orders to a
-            separate procurement alert.
-          </p>
-          <div class="build-highlight">
-            31 nodes across two branches. Inventory check fetches the full sheet once and does all SKU
-            lookups in JavaScript - avoids a per-SKU API loop that would spike CPU on a local instance.
-          </div>
-          <p class="build-meta">
-            <span>31 nodes</span>
-            <span>PDF + Excel input</span>
-            <span>Ollama · Sheets · Resend</span>
-          </p>
-        </div>
-
+        <span class="photo-note" style="margin-top:0.5rem;display:block;">Add kit-photo.jpg to replace initials</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- SERVICES -->
-  <section id="services">
-    <div class="container">
-      <p class="section-eyebrow">Services</p>
-      <h2 class="section-title">What I build for clients</h2>
-      <p class="section-desc">
-        For small service businesses, agencies, and solo operators. Self-hosted n8n, local AI - no
-        per-run API bills, no data leaving your machine.
-      </p>
-      <div class="services-grid">
-
-        <div class="service-card fade-up">
-          <div class="service-icon">📥</div>
-          <h3 class="service-title">Intake &amp; billing automation</h3>
-          <p class="service-desc">
-            Webhook-triggered pipelines that go from form submission to quote, invoice, or confirmation
-            email - automatically. VAT calculation, BIR compliance notes, Google Sheets logging included.
-          </p>
-        </div>
-
-        <div class="service-card fade-up">
-          <div class="service-icon">📩</div>
-          <h3 class="service-title">Lead qualification pipelines</h3>
-          <p class="service-desc">
-            Gmail-triggered workflows that score leads, classify intent, flag urgency, and drop a draft
-            reply in your inbox before you've touched the email. No OpenAI account needed.
-          </p>
-        </div>
-
-        <div class="service-card fade-up">
-          <div class="service-icon">📄</div>
-          <h3 class="service-title">Document processing</h3>
-          <p class="service-desc">
-            PDF, CSV, and Excel extraction using a local AI model. Field validation, balance checks,
-            schema enforcement - output goes to Baserow, Google Sheets, or a Postgres database.
-          </p>
-        </div>
-
-        <div class="service-card fade-up">
-          <div class="service-icon">🔁</div>
-          <h3 class="service-title">Reporting &amp; compliance automation</h3>
-          <p class="service-desc">
-            Scheduled workflows that pull data from multiple sources, apply your tax or compliance logic,
-            and deliver a formatted report. Audit trails included.
-          </p>
-        </div>
-
+<!-- BACKGROUND -->
+<section id="background">
+  <div class="container">
+    <p class="section-label">Background</p>
+    <h2 class="section-title">I know the work from the inside</h2>
+    <p style="color:var(--sub);max-width:600px;margin-bottom:1.5rem;">
+      Before building automation systems, I spent four years doing the manual work that gets automated.
+      That gives me an unfair advantage: I know exactly where the bottlenecks are, and I know what a solution needs to feel like to actually get used.
+    </p>
+    <div class="exp-grid">
+      <div class="exp-card">
+        <div class="exp-co">MCI EastWest BPO</div>
+        <div class="exp-role">Spanish Bilingual Agent</div>
+        <div class="exp-date">Aug 2025 – Present</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-co">XtendOps</div>
+        <div class="exp-role">Bilingual Support Specialist</div>
+        <div class="exp-date">Feb 2025 – Aug 2025</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-co">HAIZOL</div>
+        <div class="exp-role">Sales Executive (B2B, EU / US / CA)</div>
+        <div class="exp-date">Mar 2023 – Feb 2025</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-co">Teleperformance</div>
+        <div class="exp-role">Technical Support Representative</div>
+        <div class="exp-date">Mar 2022 – Mar 2023</div>
       </div>
     </div>
-  </section>
+    <div class="skills-row">
+      <span class="skill-tag skill-tag-accent">English + Spanish (bilingual)</span>
+      <span class="skill-tag">n8n automation</span>
+      <span class="skill-tag">Local AI (Ollama)</span>
+      <span class="skill-tag">API integration</span>
+      <span class="skill-tag">B2B sales</span>
+      <span class="skill-tag">Technical support</span>
+      <span class="skill-tag">Process analysis</span>
+      <span class="skill-tag">Problem-solving</span>
+    </div>
+  </div>
+</section>
 
-  <!-- STACK -->
-  <section id="stack">
-    <div class="container">
-      <p class="section-eyebrow">Stack</p>
-      <h2 class="section-title">Tools I work with</h2>
-      <div class="stack-pills">
-        <span class="stack-pill">n8n (self-hosted)</span>
-        <span class="stack-pill">Ollama / Mistral</span>
-        <span class="stack-pill">Google Sheets</span>
-        <span class="stack-pill">Baserow</span>
-        <span class="stack-pill">Resend</span>
-        <span class="stack-pill">Gmail API</span>
-        <span class="stack-pill">Postgres</span>
-        <span class="stack-pill">Shopify GraphQL</span>
-        <span class="stack-pill">SFTP</span>
-        <span class="stack-pill">JavaScript</span>
-        <span class="stack-pill">REST APIs</span>
-        <span class="stack-pill">Webhooks</span>
-        <span class="stack-pill">Resend</span>
-        <span class="stack-pill">Typeform</span>
+<!-- WORK -->
+<section id="work">
+  <div class="container">
+    <p class="section-label">Portfolio</p>
+    <h2 class="section-title">Production-tested workflows</h2>
+    <p style="color:var(--sub);max-width:600px;margin-bottom:1.5rem;">
+      Four workflows built, debugged, and confirmed working on self-hosted infrastructure.
+      Each runs on n8n + local Ollama/Mistral — no cloud AI costs, no per-token billing.
+    </p>
+
+    <div class="workflow-grid">
+
+      <!-- WORKFLOW 1 -->
+      <div class="wf-card">
+        <div class="wf-top" style="border-top-color:var(--c1)">
+          <div class="wf-num">01 · Schedule trigger · 12 nodes</div>
+          <div class="wf-title">AI Proposal Generator</div>
+          <div class="wf-one">Sends a personalized service proposal to every new lead automatically — within the hour, without anyone writing a word.</div>
+        </div>
+        <div class="wf-tags">
+          <span class="wf-tag">n8n</span><span class="wf-tag">Google Sheets</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span>
+        </div>
+        <div class="wf-footer">
+          <div><div class="wf-roi" style="color:var(--c1)">$281 / mo</div><div class="wf-roi-lbl">est. value saved</div></div>
+          <div class="wf-trigger"><span class="wf-dot" style="background:var(--c1)"></span> Every 1 hr</div>
+        </div>
+        <button type="button" class="wf-btn" onclick="toggleDetail(this)">View details ▾</button>
+        <div class="wf-detail">
+          <div class="detail-section">
+            <div class="detail-label">How it works</div>
+            <div class="flow-steps">
+              <div class="flow-step">Schedule fires every hour</div>
+              <div class="flow-step">Read Google Sheet → filter new leads (Status blank + all fields present)</div>
+              <div class="flow-step">Ollama/Mistral generates personalized proposal narrative</div>
+              <div class="flow-step">Build HTML email with hardcoded pricing</div>
+              <div class="flow-step">Send via Resend → confirm delivery</div>
+              <div class="flow-step">Mark row "Sent" + timestamp in Sheets</div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Talking points</div>
+            <ul class="talk-points">
+              <li>Personalized proposals within the hour — leads never go cold</li>
+              <li>AI runs locally — no monthly API cost, no data leaving your server</li>
+              <li>Bad or incomplete data is filtered before it ever reaches the send step</li>
+              <li>Duplicate send prevention: once a row is marked Sent, it is never touched again</li>
+              <li>Full audit trail: every lead tracked with send timestamp in Google Sheets</li>
+            </ul>
+          </div>
+        </div>
       </div>
+
+      <!-- WORKFLOW 2 -->
+      <div class="wf-card">
+        <div class="wf-top" style="border-top-color:var(--c2)">
+          <div class="wf-num">02 · Schedule trigger · 11 nodes</div>
+          <div class="wf-title">Weekly Report Generator</div>
+          <div class="wf-one">AI-written performance reports delivered to every retainer client every Monday 8AM — before the team arrives.</div>
+        </div>
+        <div class="wf-tags">
+          <span class="wf-tag">n8n</span><span class="wf-tag">Google Sheets</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span>
+        </div>
+        <div class="wf-footer">
+          <div><div class="wf-roi" style="color:var(--c2)">$806 / mo</div><div class="wf-roi-lbl">est. value saved</div></div>
+          <div class="wf-trigger"><span class="wf-dot" style="background:var(--c2)"></span> Mon 8:00 AM</div>
+        </div>
+        <button type="button" class="wf-btn" onclick="toggleDetail(this)">View details ▾</button>
+        <div class="wf-detail">
+          <div class="detail-section">
+            <div class="detail-label">How it works</div>
+            <div class="flow-steps">
+              <div class="flow-step">Schedule fires every Monday 8AM</div>
+              <div class="flow-step">Read Google Sheet → filter unsent client rows</div>
+              <div class="flow-step">Ollama generates performance narrative (or audit alert if data is bad)</div>
+              <div class="flow-step">Approval Mode: route to account manager OR send directly to client</div>
+              <div class="flow-step">Send HTML report via Resend → confirm delivery</div>
+              <div class="flow-step">Mark row "Sent" + timestamp</div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Talking points</div>
+            <ul class="talk-points">
+              <li>Reports sent before the team arrives — Monday bottleneck eliminated</li>
+              <li>Approval gate keeps managers in control without doing the writing</li>
+              <li>AI interprets numbers — never invents them. All figures come from your sheet</li>
+              <li>Bad data routes to a human reviewer, never to the client</li>
+              <li>Each report is unique — not a mail-merge</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORKFLOW 3 -->
+      <div class="wf-card">
+        <div class="wf-top" style="border-top-color:var(--c3)">
+          <div class="wf-num">03 · Webhook trigger · 21 nodes</div>
+          <div class="wf-title">Onboarding Email Sequence</div>
+          <div class="wf-one">A personalized 3-email welcome drip, AI-written per client, delivered over 7 days — triggered the moment someone signs up.</div>
+        </div>
+        <div class="wf-tags">
+          <span class="wf-tag">n8n</span><span class="wf-tag">Webhook</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span><span class="wf-tag">Sheets</span>
+        </div>
+        <div class="wf-footer">
+          <div><div class="wf-roi" style="color:var(--c3)">$300 / mo</div><div class="wf-roi-lbl">est. value saved</div></div>
+          <div class="wf-trigger"><span class="wf-dot" style="background:var(--c3)"></span> On signup</div>
+        </div>
+        <button type="button" class="wf-btn" onclick="toggleDetail(this)">View details ▾</button>
+        <div class="wf-detail">
+          <div class="detail-section">
+            <div class="detail-label">How it works</div>
+            <div class="flow-steps">
+              <div class="flow-step">Webhook receives POST with client details</div>
+              <div class="flow-step">Validate payload → log enrollment to Sheets</div>
+              <div class="flow-step">Ollama generates all 3 email bodies in one call</div>
+              <div class="flow-step">Send Email 1 (Welcome) → confirm delivery</div>
+              <div class="flow-step">Wait 3 days → Send Email 2 (Getting Started)</div>
+              <div class="flow-step">Wait 4 days → Send Email 3 (Check-In) → mark Complete</div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Talking points</div>
+            <ul class="talk-points">
+              <li>One webhook call — three personalized emails over 7 days, zero manual work</li>
+              <li>AI called once — consistent tone across the full sequence, no drift</li>
+              <li>Every client gets the same quality experience regardless of team availability</li>
+              <li>Per-email failure alerts — nothing goes unnoticed or unreported</li>
+              <li>Client data never leaves your server (local AI)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORKFLOW 4 -->
+      <div class="wf-card">
+        <div class="wf-top" style="border-top-color:var(--c4)">
+          <div class="wf-num">04 · 4-workflow system · ~37 nodes</div>
+          <div class="wf-title">AI Task Coordinator</div>
+          <div class="wf-one">Local AI classifies incoming tasks, routes them to the right handler, tracks state at every step, and auto-recovers from failures every 30 minutes.</div>
+        </div>
+        <div class="wf-tags">
+          <span class="wf-tag">n8n</span><span class="wf-tag">Webhook</span><span class="wf-tag">Baserow</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span>
+        </div>
+        <div class="wf-footer">
+          <div><div class="wf-roi" style="color:var(--c4)">$990 / mo</div><div class="wf-roi-lbl">est. value saved</div></div>
+          <div class="wf-trigger"><span class="wf-dot" style="background:var(--c4)"></span> Webhook + 30 min</div>
+        </div>
+        <button type="button" class="wf-btn" onclick="toggleDetail(this)">View details ▾</button>
+        <div class="wf-detail">
+          <div class="detail-section">
+            <div class="detail-label">How it works</div>
+            <div class="flow-steps">
+              <div class="flow-step">Task Intake (4A): webhook → validate → log as "queued" → return 202 immediately</div>
+              <div class="flow-step">Task Processor (4B): AI classifies task type → routes to handler branch</div>
+              <div class="flow-step">Execute task → send output via email → mark "complete"</div>
+              <div class="flow-step">On failure: log state, send alert — step-level tracking, not just "it broke"</div>
+              <div class="flow-step">Recovery Engine (4C): fires every 30 min → retries all failed tasks automatically</div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Talking points</div>
+            <ul class="talk-points">
+              <li>Four coordinated workflows — this is architecture, not a single automation</li>
+              <li>AI brain runs locally — zero per-classification cost, zero cloud dependency</li>
+              <li>Step-level state: you always know exactly where a task is and what happened</li>
+              <li>Failed tasks retried automatically within 30 minutes — zero manual recovery</li>
+              <li>Zero silent failures — every exception surfaces as an alert with full context</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </section>
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="container">
-      <p class="section-eyebrow">Contact</p>
-      <h2 class="section-title">Get in touch</h2>
-      <p class="section-desc">
-        If there's a process eating your time - intake, follow-ups, reporting, whatever - I'd genuinely
-        like to hear about it.
-      </p>
-      <a href="mailto:kitg3199@gmail.com" class="contact-email">kitg3199@gmail.com</a>
-      <p class="contact-note">I reply within 24 hours.</p>
+    <!-- ROI BANNER -->
+    <div class="roi-banner">
+      <div>
+        <div class="roi-banner-text">
+          Combined monthly value across all four workflows:
+          <strong>$2,377 / month</strong>
+        </div>
+        <div class="roi-caveat">Conservative estimates based on 10–20 items/month at $30/hr average team rate. Your numbers may be higher.</div>
+      </div>
+      <a href="#inquiry" style="background:var(--teal);color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;white-space:nowrap;">
+        Talk about your workflow →
+      </a>
     </div>
-  </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      <p>© 2026 Kit Gaviola &nbsp;·&nbsp; Built with n8n and Claude</p>
+  </div>
+</section>
+
+<!-- INQUIRY -->
+<section id="inquiry">
+  <div class="container">
+    <p class="section-label">Get in touch</p>
+    <h2 class="section-title">Tell me about your project</h2>
+    <p style="color:var(--sub);max-width:600px;margin-bottom:1.5rem;">
+      Describe the process you want to automate. I'll look at it, give you an honest assessment of whether it's worth automating, and what it would cost. No pitch — just a straight answer.
+    </p>
+
+    <div class="inquiry-grid">
+
+      <!-- FORM -->
+      <div class="form-box">
+        <div class="form-success" id="form-success">
+          <div class="form-success-icon">&#10003;</div>
+          <h3>Inquiry sent</h3>
+          <p>Got it. Kit will reply within 24 hours.</p>
+        </div>
+        <form id="inquiry-form" onsubmit="submitForm(event)">
+          <input type="checkbox" name="botcheck" style="display:none">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">Full name</label>
+              <input type="text" id="fname" name="name" placeholder="Maria Santos" required>
+            </div>
+            <div class="form-group">
+              <label for="fcompany">Company</label>
+              <input type="text" id="fcompany" name="company" placeholder="Acme Agency">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="femail">Email address</label>
+            <input type="email" id="femail" name="email" placeholder="maria@acme.com" required>
+          </div>
+          <div class="form-group">
+            <label for="fprocess">What process do you want to automate?</label>
+            <textarea id="fprocess" name="process" placeholder="We currently spend about X hours a week on... The main problem is... Right now someone manually does..." required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ftime">How much time does this take weekly?</label>
+              <select id="ftime" name="time_weekly">
+                <option value="">Select...</option>
+                <option value="less than 1 hour">Less than 1 hour</option>
+                <option value="1 to 3 hours">1 – 3 hours</option>
+                <option value="3 to 8 hours">3 – 8 hours</option>
+                <option value="more than 8 hours">More than 8 hours</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fdate">Preferred date for a call</label>
+              <input type="text" id="fdate" name="preferred_date" placeholder="Click a date on the calendar →" readonly style="cursor:default;">
+            </div>
+          </div>
+          <button type="submit" class="form-submit">Send inquiry →</button>
+          <p class="form-note">
+            This form routes directly to Kit. If you connect this page to an n8n webhook, your inquiry gets classified and responded to automatically — a live demo of the work itself.
+          </p>
+        </form>
+      </div>
+
+      <!-- CALENDAR -->
+      <div>
+        <div class="cal-box">
+          <div class="cal-header">
+            <button type="button" class="cal-nav" onclick="prevMonth()">&#8249;</button>
+            <span class="cal-month" id="cal-month-label"></span>
+            <button type="button" class="cal-nav" onclick="nextMonth()">&#8250;</button>
+          </div>
+          <div class="cal-grid-hd">
+            <div class="cal-day-hd">S</div>
+            <div class="cal-day-hd">M</div>
+            <div class="cal-day-hd">T</div>
+            <div class="cal-day-hd">W</div>
+            <div class="cal-day-hd">T</div>
+            <div class="cal-day-hd">F</div>
+            <div class="cal-day-hd">S</div>
+          </div>
+          <div class="cal-days" id="cal-days"></div>
+          <div class="cal-selected-info" id="cal-selected-info"></div>
+          <div class="cal-legend">
+            <div class="leg-item"><div class="leg-dot" style="background:#E0F2F1;border:1px solid #80CBC4;"></div> Available</div>
+            <div class="leg-item"><div class="leg-dot" style="background:#1E2761;"></div> Selected</div>
+            <div class="leg-item"><div class="leg-dot" style="background:#F1F5F9;border:1px solid #E2E8F0;"></div> Unavailable</div>
+          </div>
+        </div>
+        <p class="avail-note" style="margin-top:0.75rem;">Weekdays available · Cebu time (PHT, UTC+8) · Flexible for US/EU time zones</p>
+      </div>
+
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // Sticky nav colour change on scroll
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 60);
-    });
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
 
-    // Fade-in on scroll
-    const fadeEls = document.querySelectorAll('.fade-up');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e, i) => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add('visible'), i * 80);
-          io.unobserve(e.target);
-        }
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Kit Gaviola</div>
+      <div class="footer-copy">© 2026 Kit Gaviola · Cebu, Philippines</div>
+    </div>
+    <div class="footer-links">
+      <a href="mailto:kitg3199@gmail.com" onclick="copyEmail(event)">kitg3199@gmail.com</a>
+      <a href="https://www.linkedin.com/in/kit-gaviola-2943ab281/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // THEME
+  function toggleTheme() {
+    var isDark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('kg-theme', isDark ? 'dark' : 'light'); } catch(e) {}
+    document.getElementById('theme-toggle').innerHTML = isDark ? '&#9728;' : '&#9790;';
+  }
+  (function initTheme() {
+    try {
+      var saved = localStorage.getItem('kg-theme');
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark');
+        var btn = document.getElementById('theme-toggle');
+        if (btn) btn.innerHTML = '&#9728;';
+      }
+    } catch(e) {}
+  })();
+
+  // TOAST
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  // EMAIL COPY
+  function copyEmail(e) {
+    var email = 'kitg3199@gmail.com';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      e.preventDefault();
+      navigator.clipboard.writeText(email).then(function() {
+        showToast('Email copied to clipboard');
+      }).catch(function() {
+        showToast('kitg3199@gmail.com');
       });
-    }, { threshold: 0.1 });
-    fadeEls.forEach(el => io.observe(el));
-  </script>
+    }
+  }
 
+  // ACCORDION
+  function toggleDetail(btn) {
+    var detail = btn.nextElementSibling;
+    var open = detail.classList.toggle('open');
+    btn.textContent = open ? 'Hide details ▴' : 'View details ▾';
+  }
+
+  // CALENDAR
+  var calYear, calMonth, selectedDate = null;
+
+  function initCal() {
+    var now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    renderCal();
+  }
+
+  function prevMonth() {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCal();
+  }
+  function nextMonth() {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCal();
+  }
+
+  function renderCal() {
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
+
+    var firstDay = new Date(calYear, calMonth, 1).getDay();
+    var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    var today = new Date();
+    var grid = document.getElementById('cal-days');
+    grid.innerHTML = '';
+
+    for (var i = 0; i < firstDay; i++) {
+      var empty = document.createElement('div');
+      empty.className = 'cal-day empty';
+      grid.appendChild(empty);
+    }
+
+    for (var d = 1; d <= daysInMonth; d++) {
+      var cell = document.createElement('div');
+      var dayOfWeek = new Date(calYear, calMonth, d).getDay();
+      var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+      var isPast = new Date(calYear, calMonth, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var isToday = (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear());
+      var isSelected = selectedDate && selectedDate.d === d && selectedDate.m === calMonth && selectedDate.y === calYear;
+
+      cell.textContent = d;
+      if (isSelected) {
+        cell.className = 'cal-day selected';
+      } else if (isWeekend || isPast) {
+        cell.className = 'cal-day unavail';
+      } else {
+        cell.className = 'cal-day avail' + (isToday ? ' today' : '');
+        (function(day) {
+          cell.addEventListener('click', function() { selectDate(day); });
+        })(d);
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  function selectDate(d) {
+    selectedDate = { d: d, m: calMonth, y: calYear };
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var label = months[calMonth] + ' ' + d + ', ' + calYear;
+
+    var fdateEl = document.getElementById('fdate');
+    fdateEl.value = label;
+    fdateEl.classList.add('date-flash');
+    setTimeout(function() { fdateEl.classList.remove('date-flash'); }, 1400);
+
+    var info = document.getElementById('cal-selected-info');
+    info.textContent = label + ' selected — reflected in the form above';
+    info.classList.add('active');
+
+    renderCal();
+  }
+
+  // FORM SUBMIT
+  function submitForm(e) {
+    e.preventDefault();
+    var btn = document.querySelector('.form-submit');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    var name    = document.getElementById('fname').value;
+    var company = document.getElementById('fcompany').value;
+    var email   = document.getElementById('femail').value;
+    var process = document.getElementById('fprocess').value;
+    var time    = document.getElementById('ftime').value;
+    var date    = document.getElementById('fdate').value;
+
+    var data = {
+      access_key: '57753f4b-c253-4e4b-9dd3-4813842a7222',
+      subject: 'Portfolio Inquiry from ' + name + (company ? ' (' + company + ')' : ''),
+      from_name: name,
+      name: name,
+      company: company || 'Not provided',
+      email: email,
+      time_weekly: time || 'Not specified',
+      preferred_date: date || 'Not selected',
+      message: process
+    };
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function(res) {
+      return res.json();
+    }).then(function(json) {
+      if (json.success) {
+        document.getElementById('inquiry-form').style.display = 'none';
+        document.getElementById('form-success').classList.add('show');
+      } else {
+        btn.textContent = 'Send inquiry →';
+        btn.disabled = false;
+        showToast('Something went wrong. Email kitg3199@gmail.com directly.');
+      }
+    }).catch(function() {
+      btn.textContent = 'Send inquiry →';
+      btn.disabled = false;
+      showToast('Could not connect. Email kitg3199@gmail.com directly.');
+    });
+  }
+
+  // SMOOTH SCROLL
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  initCal();
+</script>
 </body>
 </html>
