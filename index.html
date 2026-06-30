@@ -231,28 +231,27 @@
   }
   .photo-frame {
     width: 180px;
-    height: 200px;
+    height: 220px;
     border-radius: 16px;
     overflow: hidden;
     border: 3px solid rgba(255,255,255,0.15);
-    background: #253380;
+    /* Light mode: matches the light body bg so transparent edges disappear */
+    background: #1E2761;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     position: relative;
   }
-  /* REPLACE: swap .photo-initials with <img src="kit-photo.jpg" style="width:100%;height:100%;object-fit:cover"> */
-  .photo-initials {
-    font-size: 4rem;
-    font-weight: 700;
-    color: #CADCFC;
-    letter-spacing: -3px;
-    text-shadow: 0 2px 12px rgba(2,128,144,0.4);
-    position: relative;
-    z-index: 1;
+  /* Dark mode: matches dark body bg */
+  html.dark .photo-frame {
+    background: #1E2761;
   }
-  .photo-frame {
-    background: linear-gradient(145deg, #1E2761 0%, #0D3460 50%, #028090 100%);
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
   }
   .photo-note {
     font-size: 0.7rem;
@@ -639,6 +638,52 @@
     .hero-name { font-size: 2rem; }
     .roi-banner { flex-direction: column; }
   }
+
+  /* PDF DOWNLOAD BUTTON */
+  .pdf-dl-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(2,128,144,0.18); border: 1px solid rgba(2,128,144,0.5);
+    color: #CADCFC; text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    padding: 7px 16px; border-radius: 6px; transition: all .2s; cursor: pointer;
+    margin-bottom: 1.25rem;
+  }
+  .pdf-dl-btn:hover { background: rgba(2,128,144,0.35); color: #fff; border-color: var(--teal); }
+  html.dark .pdf-dl-btn { background: rgba(2,128,144,0.2); }
+
+  /* CANVAS SCREENSHOT SECTION */
+  .canvas-section { margin-top: 2.5rem; }
+  .canvas-section-head { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+  html.dark .canvas-section-head { color: #CADCFC; }
+  .canvas-section-sub { font-size: 0.875rem; color: var(--sub); margin-bottom: 1.25rem; }
+  .screenshot-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+  }
+  @media (max-width: 700px) { .screenshot-grid { grid-template-columns: 1fr; } }
+  .screenshot-slot {
+    background: var(--card); border: 2px dashed var(--border); border-radius: var(--radius);
+    aspect-ratio: 16/9; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+    color: var(--muted); font-size: 0.8rem; text-align: center; padding: 1rem;
+    overflow: hidden; position: relative;
+  }
+  .screenshot-slot img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; border-radius: calc(var(--radius) - 2px);
+  }
+  .screenshot-slot-label {
+    background: var(--navy); color: #fff; font-size: 0.7rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 4px; letter-spacing: 0.05em;
+    position: absolute; top: 10px; left: 10px; z-index: 1;
+  }
+  .screenshot-placeholder-icon { font-size: 1.8rem; opacity: 0.3; }
+
+  .wf-code {
+    background: #0F172A; color: #CADCFC; font-family: 'Courier New', monospace;
+    font-size: 0.72rem; line-height: 1.6; padding: 12px 14px;
+    border-radius: 8px; overflow-x: auto; white-space: pre; margin-top: 6px;
+    border-left: 3px solid var(--teal);
+  }
+  html.dark .wf-code { background: #020817; }
 </style>
 </head>
 <body>
@@ -665,8 +710,8 @@
         <h1 class="hero-name">Kit Gaviola</h1>
         <p class="hero-title">AI Automation Specialist &nbsp;·&nbsp; Bilingual English + Spanish</p>
         <p class="hero-bio">
-          I spent four years working inside the operations that automation replaces — BPO, B2B international sales, technical support.
-          Now I build n8n + local AI systems that eliminate that manual work for good.
+          I spent four years inside the operations that automation replaces. BPO, B2B international sales, technical support.
+          Now I build n8n and local AI systems to eliminate that manual work.
           Based in Cebu, Philippines.
         </p>
         <div class="hero-pills">
@@ -682,6 +727,10 @@
             linkedin.com/in/kit-gaviola
           </a>
         </div>
+        <a href="kit-gaviola-architecture-guide.pdf" download class="pdf-dl-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download System Architecture Guide (PDF)
+        </a>
         <div class="hero-stats">
           <div>
             <span class="hstat-val">4</span>
@@ -701,15 +750,8 @@
       </div>
       <div class="photo-wrap">
         <div class="photo-frame">
-          <!--
-            TO REPLACE WITH YOUR PHOTO:
-            1. Save your photo as kit-photo.jpg in the same folder as this HTML file
-            2. Delete the <span class="photo-initials">KG</span> line below
-            3. Replace it with: <img src="kit-photo.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top">
-          -->
-          <span class="photo-initials">KG</span>
+          <img src="kit-photo.png" alt="Kit Gaviola">
         </div>
-        <span class="photo-note" style="margin-top:0.5rem;display:block;">Add kit-photo.jpg to replace initials</span>
       </div>
     </div>
   </div>
@@ -927,9 +969,81 @@
               <li>Zero silent failures — every exception surfaces as an alert with full context</li>
             </ul>
           </div>
+          <div class="detail-section">
+            <div class="detail-label">Error-handling pattern (Recovery Engine)</div>
+            <pre class="wf-code">// Every volatile node carries:
+{ "onError": "continueRegularOutput",
+  "retryOnFail": true, "maxTries": 3, "waitBetweenTries": 5000 }
+
+// Downstream IF node checks success before data flows forward:
+IF $json.error !== undefined
+  → TRUE:  log + alert Kit → skip item
+  → FALSE: continue processing
+
+// Recovery Engine runs every 30 min:
+// finds tasks stuck in "running" > 10 min or status "failed"
+// resets to "pending" → re-queues → max 3 retries before permanent fail</pre>
+          </div>
         </div>
       </div>
 
+    </div>
+
+    <!-- CANVAS SCREENSHOTS -->
+    <div class="canvas-section">
+      <p class="canvas-section-head">See the canvases</p>
+      <p class="canvas-section-sub">Technical clients want to see the logic. These are the actual n8n node maps behind each workflow.</p>
+      <div class="screenshot-grid">
+
+        <div class="screenshot-slot">
+          <!--
+            TO ADD SCREENSHOT:
+            1. Save your n8n canvas screenshot as canvas-wf1.png in this folder
+            2. Replace this comment block with:
+               <img src="canvas-wf1.png" alt="Proposal Generator canvas">
+               <span class="screenshot-slot-label">01 · Proposal Generator</span>
+          -->
+          <span class="screenshot-placeholder-icon">&#128247;</span>
+          <span>canvas-wf1.png<br>AI Proposal Generator</span>
+        </div>
+
+        <div class="screenshot-slot">
+          <!--
+            TO ADD SCREENSHOT:
+            1. Save your n8n canvas screenshot as canvas-wf2.png in this folder
+            2. Replace this comment block with:
+               <img src="canvas-wf2.png" alt="Weekly Report Generator canvas">
+               <span class="screenshot-slot-label">02 · Weekly Report Generator</span>
+          -->
+          <span class="screenshot-placeholder-icon">&#128247;</span>
+          <span>canvas-wf2.png<br>Weekly Report Generator</span>
+        </div>
+
+        <div class="screenshot-slot">
+          <!--
+            TO ADD SCREENSHOT:
+            1. Save your n8n canvas screenshot as canvas-wf3.png in this folder
+            2. Replace this comment block with:
+               <img src="canvas-wf3.png" alt="Onboarding Sequence canvas">
+               <span class="screenshot-slot-label">03 · Onboarding Sequence</span>
+          -->
+          <span class="screenshot-placeholder-icon">&#128247;</span>
+          <span>canvas-wf3.png<br>Onboarding Email Sequence</span>
+        </div>
+
+        <div class="screenshot-slot">
+          <!--
+            TO ADD SCREENSHOT:
+            1. Save your n8n canvas screenshot as canvas-wf4.png in this folder
+            2. Replace this comment block with:
+               <img src="canvas-wf4.png" alt="AI Task Coordinator canvas">
+               <span class="screenshot-slot-label">04 · AI Task Coordinator</span>
+          -->
+          <span class="screenshot-placeholder-icon">&#128247;</span>
+          <span>canvas-wf4.png<br>AI Task Coordinator</span>
+        </div>
+
+      </div>
     </div>
 
     <!-- ROI BANNER -->
@@ -953,9 +1067,9 @@
 <section id="inquiry">
   <div class="container">
     <p class="section-label">Get in touch</p>
-    <h2 class="section-title">Tell me about your project</h2>
-    <p style="color:var(--sub);max-width:600px;margin-bottom:1.5rem;">
-      Describe the process you want to automate. I'll look at it, give you an honest assessment of whether it's worth automating, and what it would cost. No pitch — just a straight answer.
+    <h2 class="section-title">Submit your bottleneck. Get a blueprint back.</h2>
+    <p style="color:var(--sub);max-width:640px;margin-bottom:1.5rem;">
+      Describe the process you want to automate. My intake pipeline logs your inquiry, maps it against a qualifying framework, and sends you an honest assessment — whether it's worth automating and a rough architecture outline. No pitch, no sales call required. This intake process itself is automated via my self-hosted n8n infrastructure.
     </p>
 
     <div class="inquiry-grid">
@@ -1005,7 +1119,7 @@
           </div>
           <button type="submit" class="form-submit">Send inquiry →</button>
           <p class="form-note">
-            This form routes directly to Kit. If you connect this page to an n8n webhook, your inquiry gets classified and responded to automatically — a live demo of the work itself.
+            This intake is powered by n8n running on my own infrastructure — your submission is logged, classified, and triggers an automated acknowledgement. You're not just reading about automation. You're experiencing it.
           </p>
         </form>
       </div>
@@ -1245,4 +1359,4 @@
   initCal();
 </script>
 </body>
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
