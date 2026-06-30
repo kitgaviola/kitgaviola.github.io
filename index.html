@@ -247,19 +247,50 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
+    position: relative;
+  }
+  /* Ambient glow ring — sits behind the frame, blurs edge artifacts away */
+  .photo-wrap::before {
+    content: '';
+    position: absolute;
+    top: -10px; right: -10px; bottom: -10px; left: -10px;
+    border-radius: 28px;
+    background: linear-gradient(135deg,
+      rgba(2,128,144,0.75) 0%,
+      rgba(30,39,97,0.85) 50%,
+      rgba(94,234,212,0.45) 100%);
+    filter: blur(20px);
+    z-index: 0;
+    opacity: 0.85;
+    transition: opacity 0.4s ease, filter 0.4s ease;
+  }
+  .photo-wrap:hover::before {
+    opacity: 1;
+    filter: blur(24px);
   }
   .photo-frame {
     width: 230px;
     height: 300px;
     border-radius: 20px;
     overflow: hidden;
-    border: 2px solid rgba(94,234,212,0.2);
+    border: 2px solid rgba(94,234,212,0.25);
     background: #1E2761;
     box-shadow:
-      0 0 0 1px rgba(2,128,144,0.15),
-      0 20px 60px rgba(0,0,0,0.45),
-      0 0 40px rgba(2,128,144,0.12);
+      0 0 0 1px rgba(2,128,144,0.2),
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 40px rgba(2,128,144,0.15);
     position: relative;
+    z-index: 1;
+  }
+  /* Bottom gradient — grounds the photo in the frame */
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 32%;
+    background: linear-gradient(to top, rgba(15,23,42,0.55) 0%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
   }
   .photo-frame img {
     width: 100%;
@@ -267,6 +298,13 @@
     object-fit: cover;
     object-position: top center;
     display: block;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 4px 16px rgba(2,128,144,0.4)) contrast(1.03) brightness(0.98);
+    transition: transform 0.45s ease;
+  }
+  .photo-frame:hover img {
+    transform: scale(1.04);
   }
   .photo-note {
     font-size: 0.7rem;
@@ -1343,36 +1381,4 @@ IF $json.error !== undefined
       subject: 'Portfolio Inquiry from ' + name + (company ? ' (' + company + ')' : ''),
       from_name: name,
       name: name,
-      company: company || 'Not provided',
-      email: email,
-      time_weekly: time || 'Not specified',
-      preferred_date: date || 'Not selected',
-      message: process
-    };
-
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(function(res) {
-      return res.json();
-    }).then(function(json) {
-      if (json.success) {
-        document.getElementById('inquiry-form').style.display = 'none';
-        document.getElementById('form-success').classList.add('show');
-      } else {
-        btn.textContent = 'Send inquiry →';
-        btn.disabled = false;
-        showToast('Something went wrong. Email kitg3199@gmail.com directly.');
-      }
-    }).catch(function() {
-      btn.textContent = 'Send inquiry →';
-      btn.disabled = false;
-      showToast('Could not connect. Email kitg3199@gmail.com directly.');
-    });
-  }
-
-  // SMOOTH SCROLL
-  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
-    a.addEventListener('click', function(e) {
-      var tar
+      
