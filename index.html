@@ -127,23 +127,39 @@
     margin-bottom: 0.5rem;
   }
   .section-title {
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--navy);
     margin-bottom: 1rem;
+    line-height: 1.2;
   }
 
   /* HERO */
   #hero {
     background: var(--navy);
-    padding: 5rem 0 4rem;
+    background-image:
+      radial-gradient(ellipse at 75% 40%, rgba(2,128,144,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 80%, rgba(30,39,97,0.6) 0%, transparent 50%);
+    padding: 5rem 0 4.5rem;
     color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
   }
   .hero-grid {
     display: grid;
-    grid-template-columns: 1fr 200px;
+    grid-template-columns: 1fr 250px;
     gap: 3rem;
-    align-items: start;
+    align-items: center;
+    position: relative;
+    z-index: 1;
   }
   .hero-badge {
     display: inline-flex;
@@ -169,10 +185,11 @@
     50% { opacity: 0.4; }
   }
   .hero-name {
-    font-size: 2.75rem;
+    font-size: 3rem;
     font-weight: 700;
-    line-height: 1.15;
+    line-height: 1.1;
     margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
   }
   .hero-title {
     font-size: 1.1rem;
@@ -212,14 +229,16 @@
     flex-wrap: wrap;
   }
   .hstat-val {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--white);
     display: block;
+    letter-spacing: -0.02em;
   }
   .hstat-lbl {
-    font-size: 0.75rem;
-    color: var(--muted);
+    font-size: 0.72rem;
+    color: #94A3B8;
+    letter-spacing: 0.03em;
   }
 
   /* PHOTO */
@@ -230,21 +249,17 @@
     gap: 0.5rem;
   }
   .photo-frame {
-    width: 180px;
-    height: 220px;
-    border-radius: 16px;
+    width: 230px;
+    height: 300px;
+    border-radius: 20px;
     overflow: hidden;
-    border: 3px solid rgba(255,255,255,0.15);
-    /* Light mode: matches the light body bg so transparent edges disappear */
+    border: 2px solid rgba(94,234,212,0.2);
     background: #1E2761;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    box-shadow:
+      0 0 0 1px rgba(2,128,144,0.15),
+      0 20px 60px rgba(0,0,0,0.45),
+      0 0 40px rgba(2,128,144,0.12);
     position: relative;
-  }
-  /* Dark mode: matches dark body bg */
-  html.dark .photo-frame {
-    background: #1E2761;
   }
   .photo-frame img {
     width: 100%;
@@ -274,6 +289,11 @@
     border-radius: var(--radius);
     padding: 1.25rem;
     border-left: 4px solid var(--teal);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .exp-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    transform: translateY(-2px);
   }
   .exp-co { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
   .exp-role { font-size: 0.8rem; color: var(--teal); font-weight: 500; margin-bottom: 3px; }
@@ -312,9 +332,12 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    transition: box-shadow .2s;
+    transition: box-shadow .25s, transform .25s;
   }
-  .wf-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .wf-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+  }
   .wf-top {
     border-top: 4px solid var(--c1);
     padding: 1.25rem 1.25rem 0;
@@ -630,12 +653,16 @@
   .form-success a { color: var(--teal); text-decoration: none; font-weight: 500; }
 
   /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr 200px; gap: 2rem; }
+    .photo-frame { width: 190px; height: 250px; }
+  }
   @media (max-width: 768px) {
     .hero-grid { grid-template-columns: 1fr; }
     .photo-wrap { display: none; }
     .inquiry-grid { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
-    .hero-name { font-size: 2rem; }
+    .hero-name { font-size: 2.25rem; }
     .roi-banner { flex-direction: column; }
   }
 
@@ -808,7 +835,7 @@
     <h2 class="section-title">Production-tested workflows</h2>
     <p style="color:var(--sub);max-width:600px;margin-bottom:1.5rem;">
       Four workflows built, debugged, and confirmed working on self-hosted infrastructure.
-      Each runs on n8n + local Ollama/Mistral — no cloud AI costs, no per-token billing.
+      Each runs on n8n + local Ollama/Mistral. No cloud AI costs, no per-token billing.
     </p>
 
     <div class="workflow-grid">
@@ -818,7 +845,7 @@
         <div class="wf-top" style="border-top-color:var(--c1)">
           <div class="wf-num">01 · Schedule trigger · 12 nodes</div>
           <div class="wf-title">AI Proposal Generator</div>
-          <div class="wf-one">Sends a personalized service proposal to every new lead automatically — within the hour, without anyone writing a word.</div>
+          <div class="wf-one">Sends a personalized service proposal to every new lead automatically. Within the hour, without anyone writing a word.</div>
         </div>
         <div class="wf-tags">
           <span class="wf-tag">n8n</span><span class="wf-tag">Google Sheets</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span>
@@ -843,8 +870,8 @@
           <div class="detail-section">
             <div class="detail-label">Talking points</div>
             <ul class="talk-points">
-              <li>Personalized proposals within the hour — leads never go cold</li>
-              <li>AI runs locally — no monthly API cost, no data leaving your server</li>
+              <li>Personalized proposals within the hour. Leads never go cold</li>
+              <li>AI runs locally. No monthly API cost, no data leaving your server</li>
               <li>Bad or incomplete data is filtered before it ever reaches the send step</li>
               <li>Duplicate send prevention: once a row is marked Sent, it is never touched again</li>
               <li>Full audit trail: every lead tracked with send timestamp in Google Sheets</li>
@@ -858,7 +885,7 @@
         <div class="wf-top" style="border-top-color:var(--c2)">
           <div class="wf-num">02 · Schedule trigger · 11 nodes</div>
           <div class="wf-title">Weekly Report Generator</div>
-          <div class="wf-one">AI-written performance reports delivered to every retainer client every Monday 8AM — before the team arrives.</div>
+          <div class="wf-one">AI-written performance reports delivered to every retainer client every Monday 8AM, before the team arrives.</div>
         </div>
         <div class="wf-tags">
           <span class="wf-tag">n8n</span><span class="wf-tag">Google Sheets</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span>
@@ -883,11 +910,11 @@
           <div class="detail-section">
             <div class="detail-label">Talking points</div>
             <ul class="talk-points">
-              <li>Reports sent before the team arrives — Monday bottleneck eliminated</li>
+              <li>Reports sent before the team does. Monday bottleneck gone</li>
               <li>Approval gate keeps managers in control without doing the writing</li>
-              <li>AI interprets numbers — never invents them. All figures come from your sheet</li>
+              <li>AI interprets numbers, never invents them. All figures come from your sheet</li>
               <li>Bad data routes to a human reviewer, never to the client</li>
-              <li>Each report is unique — not a mail-merge</li>
+              <li>Each report is unique, not a mail-merge</li>
             </ul>
           </div>
         </div>
@@ -898,7 +925,7 @@
         <div class="wf-top" style="border-top-color:var(--c3)">
           <div class="wf-num">03 · Webhook trigger · 21 nodes</div>
           <div class="wf-title">Onboarding Email Sequence</div>
-          <div class="wf-one">A personalized 3-email welcome drip, AI-written per client, delivered over 7 days — triggered the moment someone signs up.</div>
+          <div class="wf-one">A personalized 3-email welcome drip, AI-written per client, delivered over 7 days. Triggered the moment someone signs up.</div>
         </div>
         <div class="wf-tags">
           <span class="wf-tag">n8n</span><span class="wf-tag">Webhook</span><span class="wf-tag">Ollama</span><span class="wf-tag">Resend</span><span class="wf-tag">Sheets</span>
@@ -923,10 +950,10 @@
           <div class="detail-section">
             <div class="detail-label">Talking points</div>
             <ul class="talk-points">
-              <li>One webhook call — three personalized emails over 7 days, zero manual work</li>
-              <li>AI called once — consistent tone across the full sequence, no drift</li>
+              <li>One webhook call. Three personalized emails over 7 days, zero manual work</li>
+              <li>AI called once. Consistent tone across the full sequence, no drift</li>
               <li>Every client gets the same quality experience regardless of team availability</li>
-              <li>Per-email failure alerts — nothing goes unnoticed or unreported</li>
+              <li>Per-email failure alerts. Nothing goes unnoticed or unreported</li>
               <li>Client data never leaves your server (local AI)</li>
             </ul>
           </div>
@@ -955,18 +982,18 @@
               <div class="flow-step">Task Intake (4A): webhook → validate → log as "queued" → return 202 immediately</div>
               <div class="flow-step">Task Processor (4B): AI classifies task type → routes to handler branch</div>
               <div class="flow-step">Execute task → send output via email → mark "complete"</div>
-              <div class="flow-step">On failure: log state, send alert — step-level tracking, not just "it broke"</div>
+              <div class="flow-step">On failure: log state, send alert. Step-level tracking, not just "it broke"</div>
               <div class="flow-step">Recovery Engine (4C): fires every 30 min → retries all failed tasks automatically</div>
             </div>
           </div>
           <div class="detail-section">
             <div class="detail-label">Talking points</div>
             <ul class="talk-points">
-              <li>Four coordinated workflows — this is architecture, not a single automation</li>
-              <li>AI brain runs locally — zero per-classification cost, zero cloud dependency</li>
+              <li>Four coordinated workflows. This is architecture, not a single automation</li>
+              <li>AI brain runs locally. Zero per-classification cost, zero cloud dependency</li>
               <li>Step-level state: you always know exactly where a task is and what happened</li>
-              <li>Failed tasks retried automatically within 30 minutes — zero manual recovery</li>
-              <li>Zero silent failures — every exception surfaces as an alert with full context</li>
+              <li>Failed tasks retried automatically within 30 minutes. Zero manual recovery</li>
+              <li>Zero silent failures. Every exception surfaces as an alert with full context</li>
             </ul>
           </div>
           <div class="detail-section">
@@ -1069,7 +1096,7 @@ IF $json.error !== undefined
     <p class="section-label">Get in touch</p>
     <h2 class="section-title">Submit your bottleneck. Get a blueprint back.</h2>
     <p style="color:var(--sub);max-width:640px;margin-bottom:1.5rem;">
-      Describe the process you want to automate. My intake pipeline logs your inquiry, maps it against a qualifying framework, and sends you an honest assessment — whether it's worth automating and a rough architecture outline. No pitch, no sales call required. This intake process itself is automated via my self-hosted n8n infrastructure.
+      Describe the process you want to automate. My intake pipeline logs your inquiry, maps it against a qualifying framework, and sends you an honest assessment: whether it's worth automating, and a rough architecture outline. No pitch, no sales call required. This intake process itself is automated via my self-hosted n8n infrastructure.
     </p>
 
     <div class="inquiry-grid">
@@ -1119,7 +1146,7 @@ IF $json.error !== undefined
           </div>
           <button type="submit" class="form-submit">Send inquiry →</button>
           <p class="form-note">
-            This intake is powered by n8n running on my own infrastructure — your submission is logged, classified, and triggers an automated acknowledgement. You're not just reading about automation. You're experiencing it.
+            This intake is powered by n8n running on my own infrastructure. Your submission is logged, classified, and triggers an automated acknowledgement. You're not just reading about automation. You're experiencing it.
           </p>
         </form>
       </div>
@@ -1348,15 +1375,4 @@ IF $json.error !== undefined
   // SMOOTH SCROLL
   document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     a.addEventListener('click', function(e) {
-      var target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-
-  initCal();
-</script>
-</body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+      var tar
